@@ -6,6 +6,7 @@
 #include<X11/Xlib.h>
 #define LENGTH(X)               (sizeof(X) / sizeof (X[0]))
 #define CMDLENGTH		200
+#define BARLENGTH               (LENGTH(blocks) * CMDLENGTH + 1)
 
 typedef struct {
 	char* icon;
@@ -35,7 +36,7 @@ static Display *dpy;
 static int screen;
 static Window root;
 static char statusbar[LENGTH(blocks)][CMDLENGTH] = {0};
-static char statusstr[2][256];
+static char statusstr[2][BARLENGTH];
 static int statusContinue = 1;
 static void (*writestatus) () = setroot;
 
@@ -68,7 +69,6 @@ void getcmd(const Block *block, char *output)
 		output[0] = block->signal;
 		output++;
 	}
-	strcpy(output, block->icon);
 	char *cmd = block->command;
 	FILE *cmdf = popen(cmd,"r");
 	if (!cmdf)
