@@ -8,6 +8,7 @@ static const Block blocks[] = {
 	{"",	"stern",	1,	11},
 	{"",	"weather",		3600,	12},
 	{"",	"vpn",	5,	16},
+	{"",	"mic",	5,	17},
 	{"",	"gettime",		1,	0},
 };
 
