@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<unistd.h>
+#include<errno.h>
 #include<signal.h>
 #include<X11/Xlib.h>
 #define LENGTH(X)               (sizeof(X) / sizeof (X[0]))
@@ -52,19 +53,18 @@ void remove_all(char *str, char to_remove) {
 	char *read = str;
 	char *write = str;
 	while (*read) {
-		if (*read == to_remove) {
-			read++;
-			*write = *read;
+		if (*read != to_remove) {
+      *write++ = *read;
 		}
-		read++;
-		write++;
+    ++read;
 	}
+  *write = '\0';
 }
 
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output)
 {
-	if (block->signal)
+	if (0 && block->signal)
 	{
 		output[0] = block->signal;
 		output++;
@@ -73,16 +73,25 @@ void getcmd(const Block *block, char *output)
 	FILE *cmdf = popen(cmd,"r");
 	if (!cmdf)
 		return;
-        char c;
-        int i = strlen(block->icon);
-        fgets(output+i, CMDLENGTH-(strlen(delim)+1), cmdf);
-        remove_all(output, '\n');
-        i = strlen(output);
-        if ((i > 0 && block != &blocks[LENGTH(blocks) - 1]))
-            strcat(output, delim);
-        i+=strlen(delim);
-        output[i++] = '\0';
-        pclose(cmdf);
+  char tmpstr[CMDLENGTH] = "";
+  char * s;
+  int e;
+  do {
+    errno = 0;
+    s = fgets(tmpstr, CMDLENGTH-(strlen(delim)+1), cmdf);
+    e = errno;
+  } while (!s && e == EINTR);
+  pclose(cmdf);
+
+  int i = strlen(block->icon);
+  strcpy(output, block->icon);
+  strcpy(output+i, tmpstr);
+  remove_all(output, '\n');
+  i = strlen(output);
+  if ((i > 0 && block != &blocks[LENGTH(blocks) - 1]))
+      strcat(output, delim);
+  i+=strlen(delim);
+  output[i++] = '\0';
 }
 
 void getcmds(int time)
@@ -162,7 +171,7 @@ void pstdout()
 {
 	if (!getstatus(statusstr[0], statusstr[1]))//Only write out if text has changed.
 		return;
-	printf("%s\n",statusstr[0]);
+	printf("%s%s",statusstr[0], delim);
 	fflush(stdout);
 }
 
