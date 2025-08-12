@@ -8,11 +8,16 @@ static const Block blocks[] = {
 	{"",	"weath",		3600,	12},
 /*	{"",	"vpn",	5,	16}, */
 	{"",	"mic",	5,	17},
+  {"", "loadavg", 2, 18},
+  {"", "cpu", 2, 19},
+  {"", "memory", 2, 20},
 	{"",	"gettime",		1,	0},
 };
 
 //sets delimeter between status commands. NULL character ('\0') means no delimeter.
-static char *delim = " | ";
+static char *delim = "  |  ";
+static char *basecolor = "^c#abb2bf^"; 
+static char *basebackcolor = "^b#1e222a^"; 
 
 // Have dwmblocks automatically recompile and run when you edit this file in
 // vim with the following line in your vimrc/init.vim:

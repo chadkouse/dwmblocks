@@ -88,6 +88,11 @@ void getcmd(const Block *block, char *output)
   strcpy(output+i, tmpstr);
   remove_all(output, '\n');
   i = strlen(output);
+  // reset color
+  strcat(output, basebackcolor);
+  i+=strlen(basebackcolor);
+  strcat(output, basecolor);
+  i+=strlen(basecolor);
   if ((i > 0 && block != &blocks[LENGTH(blocks) - 1]))
       strcat(output, delim);
   i+=strlen(delim);
